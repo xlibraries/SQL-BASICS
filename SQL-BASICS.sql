@@ -309,3 +309,108 @@ INSERT INTO EmployeeTable VALUES(2,'arun','arun@gmail.com','30000',102)
 INSERT INTO EmployeeTable VALUES(3,'Riya','riya@gmail.com','25000',103)
 INSERT INTO EmployeeTable VALUES(4,'rena','rena@gmail.com','15000',104)
 
+------Check Constrains
+--Create Table
+Create TABLE EMPLOYEEC
+(
+	EID INT,
+	ENAME VARCHAR(25),
+	EMAIL VARCHAR(25),
+	SALARY INT
+)
+SELECT * FROM EMPLOYEEC
+--Insert Data in Table
+INSERT INTO EMPLOYEEC VALUES(101,'AAA','AAA@GMAL.COM', 10000)
+INSERT INTO EMPLOYEEC VALUES(102,'ABA','ABA@GMAL.COM', 1000)
+INSERT INTO EMPLOYEEC VALUES(103,'ACA','ACA@GMAL.COM', 20000)
+--Add Constraint
+ALTER TABLE EMPLOYEEC
+ADD CONSTRAINT CHK_SALARY
+CHECK(SALARY > 2000 AND SALARY < 15000)
+
+--Delete Constraint
+ALTER TABLE EMPLOYEEC
+DROP CONSTRAINT CHK_SALARY
+
+----UNIQUE CONSTRAINT
+--CREATE TABLE
+CREATE TABLE EmployeeNumber(EmpID int, EmpName VARCHAR(25), EmpNumber VARCHAR(20))
+
+--Add Unique Key
+ALTER TABLE Employeenumber
+ADD CONSTRAINT Emp_UN UNIQUE(EmpNumber)
+--Inserting Value
+INSERT INTO EmployeeNumber VALUES(103,'AAA', '10454')
+INSERT INTO EmployeeNumber VALUES(103,'ABA', NULL)
+INSERT INTO EmployeeNumber VALUES(103,'AAC', NULL)
+
+SELECT * FROM EmployeeNumber
+
+--DROP UNIQUE KEY
+ALTER TABLE EmployeeNumber
+DROP CONSTRAINT Emp_UN
+
+--DROP RECORD FROM TABLE
+DELETE FROM EmployeeNumber
+
+
+----Triggers: Event occering in database called trigger(in C# we know  it by event handeling)
+/*
+Types of Trigger:-
+DML:- INSERT,UPDATE, DELETE //(when specific paat of taable is affected)
+DDL:- CREATE, ALTER, DROP //(when whole table is affected)
+
+Syntax:
+CREATE TRIGGER <TRIGGERNAME>
+ON <TABLENAME>
+--OPETIONS we can select for trigger [FOR\ AFTER UPDATE/ INSTEAD OF DELETE]
+*/
+--Creating Table
+CREATE TABLE EmpLog
+(
+	LogID INT IDENTITY(1,1) NOT NULL,
+	EmpID INT NOT NULL,
+	Operations VARCHAR(10) NOT NULL,
+	EventDate DATETIME NOT NULL
+)
+--Create FOR(when all the instructions are complted then only it will update EmpLog Table) trigger
+CREATE TRIGGER trgEmpInsert
+ON EmployeeTable
+FOR INSERT
+AS
+INSERT INTO EmpLog(EmpID, Operations, EventDate)
+SELECT EmpID, 'INSERT', GETDATE() FROM inserted;
+
+SELECT * FROM EmpLog
+SELECT * FROM EmployeeTable
+
+--Inserting value in Employee table to check if trigger is working fine  or not and it is working fine
+INSERT INTO EmployeeTable VALUES(10,'Mena','Mena@gmail.com','16000',104)
+
+--Create AFTER UPDATE
+CREATE TRIGGER trgEmpInsertAfter
+ON EmployeeTable
+AFTER UPDATE
+AS
+INSERT INTO EmpLog(EmpID, Operations, UpdateDate)
+SELECT EmpID, 'UPDATE', GETDATE() FROM deleted;
+
+SELECT * FROM EmpLog
+SELECT * FROM EmployeeTable
+
+UPDATE EmployeeTable SET Salary = '15943' WHERE EmpId = 10
+
+--Create Instead of Delete Trigger
+CREATE TRIGGER trgEmpDelete
+ON EmployeeTable
+INSTEAD OF DELETE
+AS
+INSERT INTO EmpLog(EmpID, Operations, EventDate)
+SELECT EmpID, 'DELETE', GETDATE() FROM deleted;
+
+SELECT * FROM EmpLog
+SELECT * FROM EmployeeTable
+
+DELETE FROM EmployeeTable WHERE EmpId = 10
+
+

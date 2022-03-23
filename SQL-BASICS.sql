@@ -292,7 +292,20 @@ CREATE TABLE DepartmentTable
 
 --Set foreign key
 ALTER TABLE EmployeeTable
-ADD CONSTRAINT FK_DID FOREIGN KEY(DepID)
-REFERENCES Department(DepId)
+ADD CONSTRAINT FK_DID FOREIGN KEY(DepId)
+REFERENCES DepartmentTable(DepId)
 
---Drop foreign  key
+SELECT * FROM EmployeeTable
+
+INSERT INTO DepartmentTable VALUES(101,'IT')
+INSERT INTO DepartmentTable VALUES(102,'SALES')
+INSERT INTO DepartmentTable VALUES(103,'DESIGNER')
+INSERT INTO DepartmentTable VALUES(104,'ADMIN')
+
+SELECT * FROM DepartmentTable
+
+INSERT INTO EmployeeTable VALUES(1,'Rahul','rahul@gmail.com','45000',101)
+INSERT INTO EmployeeTable VALUES(2,'arun','arun@gmail.com','30000',102)
+INSERT INTO EmployeeTable VALUES(3,'Riya','riya@gmail.com','25000',103)
+INSERT INTO EmployeeTable VALUES(4,'rena','rena@gmail.com','15000',104)
+

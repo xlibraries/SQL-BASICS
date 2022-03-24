@@ -309,6 +309,7 @@ INSERT INTO EmployeeTable VALUES(2,'arun','arun@gmail.com','30000',102)
 INSERT INTO EmployeeTable VALUES(3,'Riya','riya@gmail.com','25000',103)
 INSERT INTO EmployeeTable VALUES(4,'rena','rena@gmail.com','15000',104)
 
+
 ------Check Constrains
 --Create Table
 Create TABLE EMPLOYEEC
@@ -413,4 +414,161 @@ SELECT * FROM EmployeeTable
 
 DELETE FROM EmployeeTable WHERE EmpId = 10
 
+--Creating Views
+CREATE VIEW SHOW
+AS
+SELECT S1.EmpID, S1.EmpName, S2.DepName
+FROM EmployeeTable S1, DepartmentTable S2
+WHERE S1.DepID = S2.DepId
+SELECT * FROM SHOW
 
+--Applying conditions to view
+CREATE VIEW SHOW2
+AS
+SELECT EmpName FROM EmployeeTable
+WHERE Salary > 15000
+SELECT *  FROM SHOW2
+
+CREATE TABLE Enrollement(SID INT, SName VARCHAR(25), Course VARCHAR(25))
+CREATE TABLE StudentDetails(SID INT, SName VARCHAR(25), Address VARCHAR(50), Age INT)
+
+INSERT INTO Enrollement VALUES (1001,'RAAYN', 'MBA')
+INSERT INTO Enrollement VALUES (1002,'BRAAYN', 'BE')
+INSERT INTO Enrollement VALUES (1003,'ZAAYN', 'BCOM')
+INSERT INTO Enrollement VALUES (1004,'TAYNA', 'BA')
+INSERT INTO Enrollement VALUES (1005,'RAY', 'BBA')
+
+INSERT INTO StudentDetails VALUES (1001,'RAY', 'Texas', 25)
+INSERT INTO StudentDetails VALUES (1001,'BRAAYN', 'Lala', 18)
+INSERT INTO StudentDetails VALUES (1001,'ZAAYN', 'Iland', 34)
+INSERT INTO StudentDetails VALUES (1001,'TAYNA', 'MainLand', 25)
+INSERT INTO StudentDetails VALUES (1001,'RAY', 'NorWay', 29)
+
+SELECT * FROM Enrollement
+SELECT * FROM StudentDetails
+
+TRUNCATE TABLE Enrollement
+TRUNCATE TABLE StudentDetails
+
+CREATE VIEW VIEW0
+AS
+SELECT S1.SID, S1.SName, S2.Course 
+FROM  StudentDetails S1, Enrollement S2
+WHERE S1.SID = S2.SID
+SELECT Address FROM StudentDetails
+
+SELECT * FROM VIEW0
+
+CREATE VIEW VIEW2
+AS
+SELECT StudentDetails.SID, StudentDetails.Sname, Enrollement.Course
+FROM StudentDetails
+LEFT JOIN
+Enrollement
+ON StudentDetails.SID = Enrollement.SID
+
+SELECT * FROM VIEW2
+--Dropping View
+DROP VIEW VIEW0
+
+ALTER VIEW VIEW2
+AS
+SELECT  StudentDetails.Sname, StudentDetails.Address, Enrollement.Course
+FROM StudentDetails
+INNER JOIN
+Enrollement
+ON StudentDetails.SID = Enrollement.SID
+
+SELECT * FROM VIEW2
+
+
+--STORED PROCEDURE
+--SET of statement that performs a logic
+--accepts i/o 
+ 
+--CREATE and select value in PROCEDURE
+SELECT * FROM EmployeeTable
+
+CREATE PROCEDURE udp_get
+AS
+BEGIN
+SELECT EmpName, Email, Salary
+FROM EmployeeTable
+WHERE SALARY > 15000
+END
+
+EXEC udp_get
+
+SP_HELPTEXT udp_get
+
+--INSERT -- redo this
+
+CREATE PROC UDP_INSERT
+(
+	@EmpID INT,
+	@EmpName VARCHAR(20),
+	@Email VARCHAR(20),
+	@Salary VARCHAR(20),
+	@DepID INT
+)
+AS 
+--DROP PROC UDP_INSERT
+BEGIN
+INSERT INTO EmployeeTable
+(EmpID,EmpName,Email,Salary,DepID)
+VALUES
+(
+	@EmpID,
+	@EmpName, 
+	@Email,
+	@Salary,
+	@DepID
+)
+END
+
+------from JENIFER to All Attendees:
+----CREATE PROC UDP_INSERT
+----(@EMPID INT
+----,@EMPNAME VARCHAR(20)
+----,@EMAIL VARCHAR(20)
+----,@SALARY  VARCHAR(20)
+----,@DEPTID INT)
+----AS
+----BEGIN
+----INSERT INTO EMPTABLE1
+----(EMPID,EMPNAME,EMAIL,SALARY,DEPTID)
+----VALUES(
+----@EMPID 
+----,@EMPNAME 
+----,@EMAIL 
+----,@SALARY  
+----,@DEPTID )
+----END
+
+--Try catch block
+CREATE PROC divide
+(
+	@a decimal,
+	@b decimal,
+	@c decimal output
+)
+AS
+
+BEGIN
+BEGIN TRY
+	SET @c = @a/@b;
+END TRY
+BEGIN CATCH
+SELECT
+ERROR_LINE() as ErrorLine,
+ERROR_MESSAGE() AS ErrorMessage,
+ERROR_PROCEDURE() AS ErrorProcedure,
+ERROR_NUMBER() as ErrorNumber,
+ERROR_SEVERITY() as ErrorSeverity,
+ERROR_STATE() as ErrorState
+END CATCH
+END
+
+DECLARE @r decimal
+exec DIVIDE 10,5, @r output;
+print @r;

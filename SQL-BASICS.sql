@@ -662,4 +662,37 @@ END
 
 SELECT * FROM GETSENIOREMPLOYEE()
 
+--CREATING MANAGED CODE:
+/*
+-Create Assembly
+-Understant Database Managed Objects
+
+Advantages:
+-Common developeement enviroment
+-ability to define data types
+-better programming model
+
+NameSpaces:
+System.Data // to supporty I/o
+-System.Data.SQLClient //For CLR Interrgration
+-System.Data.SQLTypes //for Var and other data  tyopes
+
+Classes:
+1)SqlContext			//assemblies to include
+2)SqlPipe				//for messaging system from sql code to server and vise cera
+3)SqlTriggerContext		//whenever a trigger/ event is occured
+4)SqlConnection			// will tell you your  database connection/ server name/ authontacation type/ which ddatabase  you are goin to work with
+5)SqlCommand			//help to do C.R.U.D(Create, read, update,  delete) operations
+6)SqlDataReader			// return's result set
+*/
+
+--Creatting managed stored procedure
+SELECT * FROM EmployeeTable
+
+--to remove CLR error
+EXEC sp_configure 'clr enabled',1;
+RECONFIGURE WITH OVERRIDE
+
+--To execute database added via Visual Studio
+EXEC dbo.GetEmployeeSP
 

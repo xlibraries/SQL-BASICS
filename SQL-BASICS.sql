@@ -572,3 +572,94 @@ END
 DECLARE @r decimal
 exec DIVIDE 10,5, @r output;
 print @r;
+
+--Functions
+
+SELECT * FROM EmployeeTable
+SELECT * FROM DepartmentTable
+
+CREATE TABLE EmployeeTable1
+(
+	EmpId int NOT NULL,
+	EmpName VarChar(50) Null,
+	EmailId VarChar(25) Null,
+	Salary int Null,
+	Department VarChar(25) Null
+);
+SELECT * FROM EmployeeTable1
+INSERT INTO EmployeeTable1 VALUES(1,'Xlib','Xlib@gmail.com',70000,'.NET')
+INSERT INTO EmployeeTable1 VALUES(2,'Maya','Maya@gmail.com',1000,'Java')
+INSERT INTO EmployeeTable1 VALUES(3,'Gaya','Gaya@gmail.com',10100,'SF')
+INSERT INTO EmployeeTable1 VALUES(4,'B0la','Bola@gmail.com',10400,'HR')
+INSERT INTO EmployeeTable1 VALUES(4,'Bhola','Bhola@gmail.com',40000,'CPO')
+
+--Add Constrains
+ALTER TABLE EmployeeTable1
+ADD CONSTRAINT PK_EmpId PRIMARY KEY(EmpId) 
+
+--Create function
+CREATE FUNCTION avgSalary()
+RETURNS INT
+AS
+BEGIN
+DECLARE @Sal INT
+SET @Sal = 0
+SELECT @Sal = AVG(Salary) FROM EmployeeTable1
+RETURN @Sal
+END
+
+SELECT dbo.avgSalary() as Average
+
+--Function for number of employees
+CREATE FUNCTION empCount()
+RETURNS INT
+AS
+BEGIN
+DECLARE @Count INT
+SET @Count = 0
+SELECT @Count = count(EmpId) FROM EmployeeTable1
+RETURN @Count
+END
+
+SELECT dbo.empCount() as Count
+
+--Function return's table
+ALTER FUNCTION empInfo(@Sal INT)
+RETURNS  TABLE
+AS
+RETURN (SELECT * FROM EmployeeTable1 WHERE Salary > @Sal)
+
+SELECT * FROM empInfo(15000)
+
+--Drop funvction
+DROP FUNCTION dbo.empCount
+
+--Calling function insie procedure
+ALTER PROCEDURE udp_get
+AS 
+BEGIN 
+SELECT dbo.empInfo()
+END
+
+declare @a int
+SET @a = 15000
+EXEC udp_get @a OUTPUT;
+print @a;
+
+--Multi line statement function 
+ALTER FUNCTION GETSENIOREMPLOYEE()
+RETURNS @sEmp TABLE
+(
+	EmpID INT,
+	EmpName VARCHAR(20)
+)
+AS
+BEGIN
+INSERT INTO @sEmp SELECT EmpID,EmpName FROM EmployeeTable1
+DELETE FROM @sEmp WHERE EmpID > 3
+RETURN 
+END
+
+SELECT * FROM GETSENIOREMPLOYEE()
+
+

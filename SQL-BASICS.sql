@@ -696,3 +696,85 @@ RECONFIGURE WITH OVERRIDE
 --To execute database added via Visual Studio
 EXEC dbo.GetEmployeeSP
 
+--Transation
+/*
+  Trannsaction:
+  Unit of work performed on a database
+  -ACID
+  (
+        ATOMICITY:-> Either completted or Failed
+        CONSISTENCY:-> every time you make an operation values are upted on a database
+        ISOLATION:-> It enavles pathway of one trainstion doesnot effect oter
+        DURIBALITY:-> How it is persisting// Even in case of system faliur database and all the revalance are maintained
+
+
+		Modes:
+		-Auto // you don't begint you don't end simple insert satement 
+		-Implicit
+		-Explicit
+   )
+ */
+
+ CREATE TABLE PRODUCT
+ (
+	ProdID  INT PRIMARY KEY,
+	ProdNmae VARCHAR(25),
+	Price INT,
+	Quantity INT
+ )
+
+ INSERT INTO PRODUCT VALUES(101,'Product1', 200,387)
+ INSERT INTO PRODUCT VALUES(102,'Product2', 220,87)
+ INSERT INTO PRODUCT VALUES(103,'Product3', 240,37)
+ INSERT INTO PRODUCT VALUES(104,'Product4', 220,337)
+ INSERT INTO PRODUCT VALUES(105,'Product6', 2670,7)
+
+ SELECT * FROM PRODUCT
+ -- External explicit transaction mode
+ BEGIN TRANSACTION
+  INSERT INTO PRODUCT VALUES(106,'Product6', 20,3)
+  UPDATE PRODUCT SET Quantity = 30 WHERE ProdID = 104;
+  DELETE FROM PRODUCT WHERE ProdID = 127
+  COMMIT TRANSACTION -- Permintely saved you can not roll back after this 
+  RollBACK Transaction -- to unndo chages made by previous transcaction
+
+  --Implicit // it is autometicaly started by SQL Server
+  SET IMPLICIT_TRANSACTION ON
+  INSERT PRODUCT VALUES(107, 'Product7', 347, 76)
+  INSERT PRODUCT VALUES(17, 'Product7', 37, 7634)
+  INSERT PRODUCT VALUES(127, 'Product7', 47, 74)
+  ROLLBACK TRANSACTION
+
+  --NESTED TRANSACTION
+  BEGIN TRANSACTION T1
+  INSERT PRODUCT VALUES(201, 'NESTED1', 47, 74)
+  INSERT PRODUCT VALUES(202, 'NESTED2', 47, 74)
+  BEGIN TRANSACTION T2
+  INSERT PRODUCT VALUES(203, 'NESTED3', 47, 74)
+  INSERT PRODUCT VALUES(204, 'NESTED4', 47, 74)
+  COMMIT TRANSACTION T2
+  COMMIT TRANSACTION T1
+
+  SELECT * FROM PRODUCT
+
+/*SAVE POINT
+It will split transaction into multiple Unit so that you  have the flexiblity to roll back and chage particular part of transaction  
+*/
+
+BEGIN TRANSACTION
+SAVE TRANSACTION S1
+  INSERT PRODUCT VALUES(301, 'SAVEPOINT1', 07, 7)
+  INSERT PRODUCT VALUES(302, 'SAVEPOINT2', 17, 70)
+
+SAVE TRANSACTION S2
+  INSERT PRODUCT VALUES(303, 'SAVEPOINT3', 27, 17)
+  INSERT PRODUCT VALUES(304, 'SAVEPOINT4', 37, 71)
+
+SAVE TRANSACTION S3
+  INSERT PRODUCT VALUES(305, 'SAVEPOINT5', 47, 27)
+  INSERT PRODUCT VALUES(306, 'SAVEPOINT6', 57, 72)
+
+SELECT * FROM PRODUCT
+
+COMMIT TRANSACTION S2
+ROLLBACK TRANSACTION S2
